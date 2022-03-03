@@ -1,0 +1,14 @@
+{
+  "name": "tarikweiss/tjson",
+  "description": "Map json strings into objects and vice versa",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tarik Weiss",
+      "email": "kontakt@tarikweiss.de"
+    }
+  ],
+  "require": {
+  }
+}
