@@ -9,6 +9,11 @@
       "email": "kontakt@tarikweiss.de"
     }
   ],
+  "autoload": {
+    "psr-4": {
+       "Tarikweiss\\Tjson\\": "src/"
+    }
+  },
   "require": {
   }
 }
