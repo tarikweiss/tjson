@@ -10,8 +10,9 @@ namespace Tarikweiss\Tjson\Util;
 class TypeUtil
 {
     private const MAPPING_SHORT_LONG = [
-        'int'  => 'integer',
-        'bool' => 'boolean',
+        'int'   => 'integer',
+        'bool'  => 'boolean',
+        'float' => 'double',
     ];
 
 
@@ -33,5 +34,33 @@ class TypeUtil
         }
 
         return $typeA === $typeB;
+    }
+
+
+    /**
+     * @param \ReflectionProperty $reflectedProperty
+     *
+     * @return string
+     */
+    public static function getJsonPropertyNameByClassProperty(\ReflectionProperty $reflectedProperty): string
+    {
+        $jsonPropertyName = $reflectedProperty->getName();
+
+        \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+        $doctrineAnnotationReader   = new \Doctrine\Common\Annotations\AnnotationReader();
+        $mappedPropertyNameInstance = $doctrineAnnotationReader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\MappedPropertyName::class);
+        if ($mappedPropertyNameInstance !== null) {
+            $jsonPropertyName = $mappedPropertyNameInstance->getName();
+        }
+
+        if (VersionUtil::isPhp8OrNewer() === true) {
+            $reflectedAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\MappedPropertyName::class);
+            foreach ($reflectedAttributes as $reflectedAttribute) {
+                $mappedPropertyNameInstance = $reflectedAttribute->newInstance();
+                $jsonPropertyName           = $mappedPropertyNameInstance->getName();
+            }
+        }
+
+        return $jsonPropertyName;
     }
 }

@@ -22,23 +22,4 @@ class ReflectionUtil
             return $reflectionProperty->isStatic() === false;
         });
     }
-
-
-    /**
-     * @param \ReflectionProperty $reflectedProperty
-     *
-     * @return string
-     */
-    public static function getJsonPropertyNameByProperty(\ReflectionProperty $reflectedProperty): string
-    {
-        $jsonPropertyName = $reflectedProperty->getName();
-
-        $reflectedAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\MappedPropertyName::class);
-        foreach ($reflectedAttributes as $reflectedAttribute) {
-            $mappedPropertyNameInstance = $reflectedAttribute->newInstance();
-            $jsonPropertyName           = $mappedPropertyNameInstance->getName();
-        }
-
-        return $jsonPropertyName;
-    }
 }
