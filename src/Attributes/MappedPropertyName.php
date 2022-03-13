@@ -6,6 +6,8 @@ namespace Tarikweiss\Tjson\Attributes;
  * Class MappedPropertyName
  *
  * @package Tarikweiss\Tjson\Attributes
+ * @Annotation
+ * @\Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor()
  */
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class MappedPropertyName

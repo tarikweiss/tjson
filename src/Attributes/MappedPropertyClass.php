@@ -8,8 +8,10 @@ namespace Tarikweiss\Tjson\Attributes;
  * a type or specifying union type.<br>
  * If only a single type is specified and class name does not match, an exception will be thrown.
  * @package Tarikweiss\Tjson\Attributes
+ * @Annotation
+ * @\Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor
  */
-#[\Attribute]
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class MappedPropertyClass
 {
     /**

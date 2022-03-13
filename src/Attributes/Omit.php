@@ -6,11 +6,13 @@ namespace Tarikweiss\Tjson\Attributes;
  * Class Omit
  *
  * @package Tarikweiss\Tjson\Attributes
+ * @Annotation 
+ * @\Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor()
  */
-#[\Attribute]
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class Omit
 {
-    private bool $omit;
+    public bool $omit;
 
 
     /**
