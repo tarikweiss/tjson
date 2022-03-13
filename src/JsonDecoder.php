@@ -22,7 +22,7 @@ class JsonDecoder
      * @throws \Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException
      * @throws \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException
      */
-    public function decode(string $json, string $className): mixed
+    public function decode(string $json, string $className)
     {
         /**
          * @var \Tarikweiss\Tjson\Attributes\MappedPropertyName $mappedPropertyNameInstance
@@ -33,16 +33,16 @@ class JsonDecoder
             throw new \Tarikweiss\Tjson\Exception\ClassNotFoundException('Class ' . $className . ' not found.');
         }
 
-        $reflectionClass = (new \ReflectionClass($className));
+        $reflectionClass = new \ReflectionClass($className);
         $mappableClass   = $reflectionClass->newInstanceWithoutConstructor();
 
-        $reflectionObject    = (new \ReflectionObject($mappableClass));
+        $reflectionObject    = new \ReflectionObject($mappableClass);
         $reflectedProperties = $reflectionObject->getProperties();
 
         $processedJsonPropertyNames = [];
 
         foreach ($reflectedProperties as $reflectedProperty) {
-            $jsonPropertyName = \Tarikweiss\Tjson\Util\ReflectionUtil::getJsonPropertyNameByProperty($reflectedProperty);
+            $jsonPropertyName = \Tarikweiss\Tjson\Util\TypeUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
             if (array_key_exists($jsonPropertyName, $processedJsonPropertyNames) === true) {
                 throw new \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException('There is a duplicate of the property name definition for \'' . $jsonPropertyName . '\'');
             }
@@ -63,14 +63,29 @@ class JsonDecoder
             $jsonValueType = gettype($jsonValue);
 
             if (count($types) === 1) {
-                if ($jsonValueType === 'object') {
-                    $type = $types[0];
+                $type = $types[0];
 
-                    // Check if type is builtin and if not, then map that.
-                    if ($type->isBuiltin() === false) {
-                        $className = $type->getName();
-                        // Maybe find a better solution for that...
-                        $jsonValue = $this->decode(json_encode($jsonValue), $className);
+                $jsonValueTypeDoesMatch = \Tarikweiss\Tjson\Util\TypeUtil::doTypesMatch($jsonValueType, $type->getName());
+                if ($jsonValueTypeDoesMatch === false) {
+                    switch ($jsonValueType) {
+                        case 'object':
+                        {
+                            // Check if type is builtin and if not, then map that.
+                            if ($type->isBuiltin() === false) {
+                                $className = $type->getName();
+                                // Maybe find a better solution for that...
+                                $jsonValue = $this->decode(json_encode($jsonValue), $className);
+                            }
+                            break;
+                        }
+                        case 'NULL':
+                        {
+                            break;
+                        }
+                        default:
+                        {
+                            throw new \Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException('No matching type found for json property \'' . $jsonPropertyName . '\'');
+                        }
                     }
                 }
             }
@@ -116,13 +131,22 @@ class JsonDecoder
         /**
          * @var \Tarikweiss\Tjson\Attributes\Required $requiredAttributeInstance
          */
-        $attributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Required::class);
-        $required   = $reflectedProperty->hasType();
+
+        $required = $reflectedProperty->hasType();
         if ($required === false) {
-            foreach ($attributes as $attribute) {
-                $requiredAttributeInstance = $attribute->newInstance();
-                if ($requiredAttributeInstance->isRequired()) {
-                    $required = true;
+            $reader     = new \Doctrine\Common\Annotations\AnnotationReader();
+            $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Required::class);
+            if ($annotation instanceof \Tarikweiss\Tjson\Attributes\Required === true && $annotation->isRequired()) {
+                $required = true;
+            }
+
+            if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+                $attributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Required::class);
+                foreach ($attributes as $attribute) {
+                    $requiredAttributeInstance = $attribute->newInstance();
+                    if ($requiredAttributeInstance->isRequired()) {
+                        $required = true;
+                    }
                 }
             }
         }
@@ -137,7 +161,7 @@ class JsonDecoder
      *
      * @throws \Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException
      */
-    private function nullCheck(mixed $jsonValueType, bool $nullable): void
+    private function nullCheck($jsonValueType, bool $nullable): void
     {
         if (\Tarikweiss\Tjson\Util\TypeUtil::doTypesMatch($jsonValueType, 'NULL') === true && $nullable === false) {
             throw new \Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException('Defined types do not contain type of json value.');
@@ -196,16 +220,7 @@ class JsonDecoder
             }
         }
 
-        $mappedType = null;
-
-        $mappedPropertyClassAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\MappedPropertyClass::class);
-        foreach ($mappedPropertyClassAttributes as $mappedPropertyClassAttribute) {
-            $mappedPropertyClassInstance = $mappedPropertyClassAttribute->newInstance();
-            $class                       = $mappedPropertyClassInstance->getClass();
-            if (class_exists($class) === true) {
-                $mappedType = $class;
-            }
-        }
+        $mappedType = $this->getMappedType($reflectedProperty);
 
         if ($mappedType !== null) {
             if (count($types) === 0) {
@@ -248,5 +263,35 @@ class JsonDecoder
         }
 
         return $types;
+    }
+
+
+    /**
+     * @param \ReflectionProperty $reflectedProperty
+     *
+     * @return string
+     */
+    private function getMappedType(\ReflectionProperty $reflectedProperty): ?string
+    {
+        $mappedType = null;
+
+        $reader     = new \Doctrine\Common\Annotations\AnnotationReader();
+        $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\MappedPropertyClass::class);
+        if ($annotation instanceof \Tarikweiss\Tjson\Attributes\MappedPropertyClass === true) {
+            $mappedType = $annotation->getClass();
+        }
+
+        if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+            $mappedPropertyClassAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\MappedPropertyClass::class);
+            foreach ($mappedPropertyClassAttributes as $mappedPropertyClassAttribute) {
+                $mappedPropertyClassInstance = $mappedPropertyClassAttribute->newInstance();
+                $class                       = $mappedPropertyClassInstance->getClass();
+                if (class_exists($class) === true) {
+                    $mappedType = $class;
+                }
+            }
+        }
+
+        return $mappedType;
     }
 }
