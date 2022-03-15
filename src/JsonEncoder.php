@@ -64,7 +64,12 @@ class JsonEncoder
         $mappedProperties    = [];
         $reflectedProperties = \Tarikweiss\Tjson\Util\ReflectionUtil::getReflectedProperties($object);
         foreach ($reflectedProperties as $reflectedProperty) {
-            $jsonPropertyName = \Tarikweiss\Tjson\Util\TypeUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
+            $jsonPropertyName = \Tarikweiss\Tjson\Util\PropertyUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
+
+            if (true === $this->isOmitted($reflectedProperty)) {
+                continue;
+            }
+
             if (array_key_exists($jsonPropertyName, $mappedProperties) === true) {
                 throw new \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException('There is a duplicate of the property name definition for \'' . $jsonPropertyName . '\'');
             }

@@ -3,11 +3,11 @@
 namespace Tarikweiss\Tjson\Util;
 
 /**
- * Class TypeUtil
+ * Class PropertyUtil
  *
  * @package Tarikweiss\Tjson\Util
  */
-class TypeUtil
+class PropertyUtil
 {
     private const MAPPING_SHORT_LONG = [
         'int'   => 'integer',
@@ -62,5 +62,39 @@ class TypeUtil
         }
 
         return $jsonPropertyName;
+    }
+
+
+    /**
+     * @param \ReflectionProperty $reflectedProperty
+     *
+     * @return bool
+     */
+    public static function isRequired(\ReflectionProperty $reflectedProperty): bool
+    {
+        /**
+         * @var \Tarikweiss\Tjson\Attributes\Required $requiredAttributeInstance
+         */
+
+        $required = $reflectedProperty->hasType();
+        if ($required === false) {
+            $reader     = new \Doctrine\Common\Annotations\AnnotationReader();
+            $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Required::class);
+            if ($annotation instanceof \Tarikweiss\Tjson\Attributes\Required === true && $annotation->isRequired()) {
+                $required = true;
+            }
+
+            if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+                $attributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Required::class);
+                foreach ($attributes as $attribute) {
+                    $requiredAttributeInstance = $attribute->newInstance();
+                    if ($requiredAttributeInstance->isRequired()) {
+                        $required = true;
+                    }
+                }
+            }
+        }
+
+        return $required;
     }
 }

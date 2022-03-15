@@ -16,10 +16,28 @@ class ReflectionUtil
      */
     public static function getReflectedProperties(object $object): array
     {
-        $reflectedInstance   = new \ReflectionObject($object);
+        $reflectedInstance = new \ReflectionObject($object);
 
         return array_filter($reflectedInstance->getProperties(), function ($reflectionProperty) {
             return $reflectionProperty->isStatic() === false;
         });
+    }
+
+
+    /**
+     * @param \ReflectionProperty $reflectedProperty
+     *
+     * @return bool
+     */
+    public static function isNullable(\ReflectionProperty $reflectedProperty): bool
+    {
+        if (true === $reflectedProperty->hasType()) {
+            return $reflectedProperty
+                ->getType()
+                ->allowsNull()
+            ;
+        }
+
+        return true;
     }
 }

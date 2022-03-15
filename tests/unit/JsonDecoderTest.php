@@ -13,7 +13,7 @@ class JsonDecoderTest extends \PHPUnit\Framework\TestCase
 
         $jsonString = '{"int":10,"bool":true,"string":"Some fantastic string!","float":17.5,"array":[1,2,3,4,5,6],"object":{"intProperty":10,"boolProperty":false}}';
         $decoder    = (new \Tarikweiss\Tjson\JsonDecoder());
-        $foo        = $decoder->decode($jsonString, Foo::class);
+        $foo        = $decoder->decodeByClassName($jsonString, Foo::class);
         $this->assertInstanceOf(Foo::class, $foo);
         $this->assertSame(10, $foo->getInt());
         $this->assertSame(true, $foo->isBool());
@@ -39,7 +39,7 @@ class JsonDecoderTest extends \PHPUnit\Framework\TestCase
         $decoder = (new \Tarikweiss\Tjson\JsonDecoder());
         $this->expectException(\Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException::class);
         $this->expectExceptionMessage('No matching type found for json property \'' . $field . '\'');
-        $decoder->decode($jsonString, Foo::class);
+        $decoder->decodeByClassName($jsonString, Foo::class);
     }
 
 
