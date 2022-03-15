@@ -76,25 +76,51 @@ class PropertyUtil
          * @var \Tarikweiss\Tjson\Attributes\Required $requiredAttributeInstance
          */
 
-        $required = $reflectedProperty->hasType();
-        if ($required === false) {
-            $reader     = new \Doctrine\Common\Annotations\AnnotationReader();
-            $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Required::class);
-            if ($annotation instanceof \Tarikweiss\Tjson\Attributes\Required === true && $annotation->isRequired()) {
-                $required = true;
-            }
+        $required   = $reflectedProperty->hasType();
+        $reader     = new \Doctrine\Common\Annotations\AnnotationReader();
+        $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Required::class);
+        if ($annotation instanceof \Tarikweiss\Tjson\Attributes\Required === true) {
+            $required = $annotation->isRequired();
+        }
 
-            if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
-                $attributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Required::class);
-                foreach ($attributes as $attribute) {
-                    $requiredAttributeInstance = $attribute->newInstance();
-                    if ($requiredAttributeInstance->isRequired()) {
-                        $required = true;
-                    }
-                }
+        if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+            $attributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Required::class);
+            foreach ($attributes as $attribute) {
+                $requiredAttributeInstance = $attribute->newInstance();
+                $required                  = $requiredAttributeInstance->isRequired();
             }
         }
 
         return $required;
+    }
+
+
+    /**
+     * @param \ReflectionProperty $reflectedProperty
+     *
+     * @return bool
+     */
+    public static function isOmitted(\ReflectionProperty $reflectedProperty): bool
+    {
+        /**
+         * @var \Tarikweiss\Tjson\Attributes\Omit $omitAttributeInstance
+         */
+        $omit = false;
+
+        $reader         = new \Doctrine\Common\Annotations\AnnotationReader();
+        $omitAnnotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Omit::class);
+        if ($omitAnnotation instanceof \Tarikweiss\Tjson\Attributes\Omit === true) {
+            $omit = $omitAnnotation->isOmit();
+        }
+
+        if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+            $omitAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Omit::class);
+            foreach ($omitAttributes as $omitAttribute) {
+                $omitAttributeInstance = $omitAttribute->newInstance();
+                $omit = $omitAttributeInstance->isOmit();
+            }
+        }
+
+        return $omit;
     }
 }

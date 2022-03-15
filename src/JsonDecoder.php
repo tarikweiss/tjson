@@ -63,6 +63,11 @@ class JsonDecoder
 
         foreach ($reflectedProperties as $reflectedProperty) {
             $jsonPropertyName = \Tarikweiss\Tjson\Util\PropertyUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
+
+            if (\Tarikweiss\Tjson\Util\PropertyUtil::isOmitted($reflectedProperty)) {
+                continue;
+            }
+
             if (array_key_exists($jsonPropertyName, $processedJsonPropertyNames) === true) {
                 throw new \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException('There is a duplicate of the property name definition for \'' . $jsonPropertyName . '\'');
             }

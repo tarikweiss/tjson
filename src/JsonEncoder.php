@@ -55,18 +55,23 @@ class JsonEncoder
 
     /**
      * @param object $object
+     * @param int    $depth
      *
-     * @return array
+     * @return array|null
      * @throws \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException
      */
-    private function prepareObject(object $object, int $depth = 1): array
+    private function prepareObject(object $object, int $depth = 1): ?array
     {
+        if ($depth > 512) {
+            return null;
+        }
         $mappedProperties    = [];
         $reflectedProperties = \Tarikweiss\Tjson\Util\ReflectionUtil::getReflectedProperties($object);
         foreach ($reflectedProperties as $reflectedProperty) {
             $jsonPropertyName = \Tarikweiss\Tjson\Util\PropertyUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
 
-            if (true === $this->isOmitted($reflectedProperty)) {
+            if (\Tarikweiss\Tjson\Util\PropertyUtil::isOmitted($reflectedProperty) === true) {
                 continue;
             }
 
@@ -74,10 +79,13 @@ class JsonEncoder
                 throw new \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException('There is a duplicate of the property name definition for \'' . $jsonPropertyName . '\'');
             }
 
+            $required = \Tarikweiss\Tjson\Util\PropertyUtil::isRequired($reflectedProperty);
+
             $reflectedProperty->setAccessible(true);
             if ($reflectedProperty->isInitialized($object) === false) {
-                // Behave smooth, if we have an uninitialized, strong typed property.
-                // @todo make this behaviour configurable, because maybe it should throw an exception...
+                if ($required === true) {
+                    throw new \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException(sprintf('The required property \'%s\' is not initialized.', $jsonPropertyName));
+                }
                 continue;
             }
             $reflectedPropertyValue = $reflectedProperty->getValue($object);
@@ -88,37 +96,5 @@ class JsonEncoder
         }
 
         return $mappedProperties;
-    }
-
-
-    /**
-     * @param \ReflectionProperty $reflectedProperty
-     *
-     * @return bool
-     */
-    private function isOmitted(\ReflectionProperty $reflectedProperty): bool
-    {
-        /**
-         * @var \Tarikweiss\Tjson\Attributes\Omit $omitAttributeInstance
-         */
-        $omit = false;
-
-        $reader         = new \Doctrine\Common\Annotations\AnnotationReader();
-        $omitAnnotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Omit::class);
-        if ($omitAnnotation instanceof \Tarikweiss\Tjson\Attributes\Omit === true && $omitAnnotation->isOmit() === true) {
-            $omit = true;
-        }
-
-        if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
-            $omitAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Omit::class);
-            foreach ($omitAttributes as $omitAttribute) {
-                $omitAttributeInstance = $omitAttribute->newInstance();
-                if ($omitAttributeInstance->isOmit() === true) {
-                    $omit = true;
-                }
-            }
-        }
-
-        return $omit;
     }
 }
