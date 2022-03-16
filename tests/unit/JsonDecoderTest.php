@@ -12,7 +12,7 @@ class JsonDecoderTest extends \PHPUnit\Framework\TestCase
         $object->boolProperty = false;
 
         $jsonString = '{"int":10,"bool":true,"string":"Some fantastic string!","float":17.5,"array":[1,2,3,4,5,6],"object":{"intProperty":10,"boolProperty":false}}';
-        $decoder    = (new \Tarikweiss\Tjson\JsonDecoder());
+        $decoder    = (new \Tjson\JsonDecoder());
         $foo        = $decoder->decodeByClassName($jsonString, Foo::class);
         $this->assertInstanceOf(Foo::class, $foo);
         $this->assertSame(10, $foo->getInt());
@@ -28,16 +28,16 @@ class JsonDecoderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider decodeFailsOnNoMatchingTypeDefinitionDataProvider
      * @return void
      * @throws \ReflectionException
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousTypeDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\ClassNotFoundException
-     * @throws \Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException
+     * @throws \Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\AmbiguousTypeDefinitionException
+     * @throws \Tjson\Exception\ClassNotFoundException
+     * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
+     * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
     public function testDecodeFailsOnNoMatchingTypeDefinition($jsonString, $field)
     {
-        $decoder = (new \Tarikweiss\Tjson\JsonDecoder());
-        $this->expectException(\Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException::class);
+        $decoder = (new \Tjson\JsonDecoder());
+        $this->expectException(\Tjson\Exception\NoMatchingTypeDefinitionException::class);
         $this->expectExceptionMessage('No matching type found for json property \'' . $field . '\'');
         $decoder->decodeByClassName($jsonString, Foo::class);
     }

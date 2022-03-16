@@ -8,21 +8,22 @@ It will map all properties (including private and protected), as long they are n
 ### Sample object class
 The properties can be configured with doctrine annotations or the new PHP 8 attributes.
 A full documentation of the annotations/attributes is following.
+
 ```php
 class ClassToConvert
 {
-    #[\Tarikweiss\Tjson\Attributes\MappedPropertyName(name: 'public_item')]
+    #[\Tjson\Attributes\MappedPropertyName(name: 'public_item')]
     public $publicItem;
     
     protected $protectedItem;
     
     private $privateItem;
     
-    #[\Tarikweiss\Tjson\Attributes\MappedPropertyClass(class: ClassC::class)]
+    #[\Tjson\Attributes\MappedPropertyClass(class: ClassC::class)]
     private ClassA|ClassB|ClassC $typedItems;
     
     /**
-     * @\Tarikweiss\Tjson\Attributes\Required(required = true)
+     * @\Tjson\Attributes\Required(required = true)
      */
     private $anotherProperty = 'withValue';
     
@@ -47,8 +48,9 @@ This json is assumed as value for `$jsonString` for the following samples:
 ````
 #### Decoder
 Decoding is done as follows:
+
 ```php
-$jsonDecoder = new \Tarikweiss\Tjson\JsonDecoder();
+$jsonDecoder = new \Tjson\JsonDecoder();
 
 $yourClassInstance = $jsonDecoder->decodeByClassName($jsonString, \Your\Class::class)
 echo $yourClassInstance->getProtectedItem() // 1337
@@ -56,8 +58,9 @@ echo $yourClassInstance->getProtectedItem() // 1337
 
 #### Encoder
 Encoding is done as follows:
+
 ```php
-$jsonEncoder = new \Tarikweiss\Tjson\JsonEncoder();
+$jsonEncoder = new \Tjson\JsonEncoder();
 
 $jsonString = $jsonEncoder->encode($yourClassInstance);
 ```

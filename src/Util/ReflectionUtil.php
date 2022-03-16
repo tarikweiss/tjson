@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Util;
+namespace Tjson\Util;
 
 /**
  * Class ReflectionUtil
  *
- * @package Tarikweiss\Tjson\Util
+ * @package Tjson\Util
  */
 class ReflectionUtil
 {

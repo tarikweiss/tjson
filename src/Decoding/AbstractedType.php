@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Decoding;
+namespace Tjson\Decoding;
 
 /**
  * Class AbstractedType
  *
- * @package Tarikweiss\Tjson\Decoding
+ * @package Tjson\Decoding
  */
 class AbstractedType
 {

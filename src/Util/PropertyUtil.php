@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Util;
+namespace Tjson\Util;
 
 /**
  * Class PropertyUtil
  *
- * @package Tarikweiss\Tjson\Util
+ * @package Tjson\Util
  */
 class PropertyUtil
 {
@@ -48,13 +48,13 @@ class PropertyUtil
 
         \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
         $doctrineAnnotationReader   = new \Doctrine\Common\Annotations\AnnotationReader();
-        $mappedPropertyNameInstance = $doctrineAnnotationReader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\MappedPropertyName::class);
+        $mappedPropertyNameInstance = $doctrineAnnotationReader->getPropertyAnnotation($reflectedProperty, \Tjson\Attributes\MappedPropertyName::class);
         if ($mappedPropertyNameInstance !== null) {
             $jsonPropertyName = $mappedPropertyNameInstance->getName();
         }
 
         if (VersionUtil::isPhp8OrNewer() === true) {
-            $reflectedAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\MappedPropertyName::class);
+            $reflectedAttributes = $reflectedProperty->getAttributes(\Tjson\Attributes\MappedPropertyName::class);
             foreach ($reflectedAttributes as $reflectedAttribute) {
                 $mappedPropertyNameInstance = $reflectedAttribute->newInstance();
                 $jsonPropertyName           = $mappedPropertyNameInstance->getName();
@@ -73,18 +73,18 @@ class PropertyUtil
     public static function isRequired(\ReflectionProperty $reflectedProperty): bool
     {
         /**
-         * @var \Tarikweiss\Tjson\Attributes\Required $requiredAttributeInstance
+         * @var \Tjson\Attributes\Required $requiredAttributeInstance
          */
 
         $required   = $reflectedProperty->hasType();
         $reader     = new \Doctrine\Common\Annotations\AnnotationReader();
-        $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Required::class);
-        if ($annotation instanceof \Tarikweiss\Tjson\Attributes\Required === true) {
+        $annotation = $reader->getPropertyAnnotation($reflectedProperty, \Tjson\Attributes\Required::class);
+        if ($annotation instanceof \Tjson\Attributes\Required === true) {
             $required = $annotation->isRequired();
         }
 
-        if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
-            $attributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Required::class);
+        if (\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+            $attributes = $reflectedProperty->getAttributes(\Tjson\Attributes\Required::class);
             foreach ($attributes as $attribute) {
                 $requiredAttributeInstance = $attribute->newInstance();
                 $required                  = $requiredAttributeInstance->isRequired();
@@ -103,18 +103,18 @@ class PropertyUtil
     public static function isOmitted(\ReflectionProperty $reflectedProperty): bool
     {
         /**
-         * @var \Tarikweiss\Tjson\Attributes\Omit $omitAttributeInstance
+         * @var \Tjson\Attributes\Omit $omitAttributeInstance
          */
         $omit = false;
 
         $reader         = new \Doctrine\Common\Annotations\AnnotationReader();
-        $omitAnnotation = $reader->getPropertyAnnotation($reflectedProperty, \Tarikweiss\Tjson\Attributes\Omit::class);
-        if ($omitAnnotation instanceof \Tarikweiss\Tjson\Attributes\Omit === true) {
+        $omitAnnotation = $reader->getPropertyAnnotation($reflectedProperty, \Tjson\Attributes\Omit::class);
+        if ($omitAnnotation instanceof \Tjson\Attributes\Omit === true) {
             $omit = $omitAnnotation->isOmit();
         }
 
-        if (\Tarikweiss\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
-            $omitAttributes = $reflectedProperty->getAttributes(\Tarikweiss\Tjson\Attributes\Omit::class);
+        if (\Tjson\Util\VersionUtil::isPhp8OrNewer() === true) {
+            $omitAttributes = $reflectedProperty->getAttributes(\Tjson\Attributes\Omit::class);
             foreach ($omitAttributes as $omitAttribute) {
                 $omitAttributeInstance = $omitAttribute->newInstance();
                 $omit = $omitAttributeInstance->isOmit();
