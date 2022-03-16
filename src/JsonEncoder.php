@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson;
+namespace Tjson;
 
 /**
  * Class JsonEncoder
  *
- * @package Tarikweiss\Tjson
+ * @package Tjson
  */
 class JsonEncoder
 {
@@ -13,7 +13,7 @@ class JsonEncoder
      * @param mixed $object
      *
      * @return string
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\AmbiguousNameDefinitionException
      */
     public function encode($object)
     {
@@ -40,7 +40,7 @@ class JsonEncoder
      * @param array $array
      *
      * @return array
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\AmbiguousNameDefinitionException
      */
     private function prepareArray(array $array): array
     {
@@ -58,8 +58,8 @@ class JsonEncoder
      * @param int    $depth
      *
      * @return array|null
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException
+     * @throws \Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
     private function prepareObject(object $object, int $depth = 1): ?array
     {
@@ -67,24 +67,24 @@ class JsonEncoder
             return null;
         }
         $mappedProperties    = [];
-        $reflectedProperties = \Tarikweiss\Tjson\Util\ReflectionUtil::getReflectedProperties($object);
+        $reflectedProperties = \Tjson\Util\ReflectionUtil::getReflectedProperties($object);
         foreach ($reflectedProperties as $reflectedProperty) {
-            $jsonPropertyName = \Tarikweiss\Tjson\Util\PropertyUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
+            $jsonPropertyName = \Tjson\Util\PropertyUtil::getJsonPropertyNameByClassProperty($reflectedProperty);
 
-            if (\Tarikweiss\Tjson\Util\PropertyUtil::isOmitted($reflectedProperty) === true) {
+            if (\Tjson\Util\PropertyUtil::isOmitted($reflectedProperty) === true) {
                 continue;
             }
 
             if (array_key_exists($jsonPropertyName, $mappedProperties) === true) {
-                throw new \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException('There is a duplicate of the property name definition for \'' . $jsonPropertyName . '\'');
+                throw new \Tjson\Exception\AmbiguousNameDefinitionException('There is a duplicate of the property name definition for \'' . $jsonPropertyName . '\'');
             }
 
-            $required = \Tarikweiss\Tjson\Util\PropertyUtil::isRequired($reflectedProperty);
+            $required = \Tjson\Util\PropertyUtil::isRequired($reflectedProperty);
 
             $reflectedProperty->setAccessible(true);
             if ($reflectedProperty->isInitialized($object) === false) {
                 if ($required === true) {
-                    throw new \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException(sprintf('The required property \'%s\' is not initialized.', $jsonPropertyName));
+                    throw new \Tjson\Exception\RequiredPropertyNotFoundException(sprintf('The required property \'%s\' is not initialized.', $jsonPropertyName));
                 }
                 continue;
             }

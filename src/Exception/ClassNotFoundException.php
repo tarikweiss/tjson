@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Exception;
+namespace Tjson\Exception;
 
 /**
  * Class ClassNotFoundException
  *
- * @package Tarikweiss\Tjson\Exception
+ * @package Tjson\Exception
  */
 class ClassNotFoundException extends \Exception
 {

@@ -11,21 +11,21 @@ class RequiredDetectionTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      * @throws \ReflectionException
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousNameDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\AmbiguousTypeDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\ClassNotFoundException
-     * @throws \Tarikweiss\Tjson\Exception\NoMatchingTypeDefinitionException
-     * @throws \Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException
+     * @throws \Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\AmbiguousTypeDefinitionException
+     * @throws \Tjson\Exception\ClassNotFoundException
+     * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
+     * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      * @dataProvider requiredDetectionOnDecodeDataProvider
      */
     public function testRequiredDetectionOnDecode(string $json, bool $expectException)
     {
         $testObject = new TestObject();
 
-        $jsonDecoder = new \Tarikweiss\Tjson\JsonDecoder();
+        $jsonDecoder = new \Tjson\JsonDecoder();
 
         if (true === $expectException) {
-            $this->expectException(\Tarikweiss\Tjson\Exception\RequiredPropertyNotFoundException::class);
+            $this->expectException(\Tjson\Exception\RequiredPropertyNotFoundException::class);
         }
 
         $jsonDecoder->decodeByObject($json, $testObject);
@@ -69,7 +69,7 @@ class TestObject
 
     /**
      * @var string
-     * @\Tarikweiss\Tjson\Attributes\Required(required = true)
+     * @\Tjson\Attributes\Required(required = true)
      */
     private $explicitRequired;
 

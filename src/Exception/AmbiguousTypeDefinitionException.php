@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Exception;
+namespace Tjson\Exception;
 
 /**
  * Class AmbiguousTypeDefinitionException
  *
- * @package Tarikweiss\Tjson\Exception
+ * @package Tjson\Exception
  */
 class AmbiguousTypeDefinitionException extends \Exception
 {

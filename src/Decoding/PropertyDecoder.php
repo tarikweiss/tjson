@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Decoding;
+namespace Tjson\Decoding;
 
 /**
  * Class PropertyDecoder
  *
- * @package Tarikweiss\Tjson\Decoding
+ * @package Tjson\Decoding
  */
 class PropertyDecoder
 {

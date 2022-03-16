@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-       "Tarikweiss\\Tjson\\": "src/"
+       "Tjson\\": "src/"
     }
   },
   "require-dev": {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarikweiss\Tjson\Attributes;
+namespace Tjson\Attributes;
 
 /**
  * Class MappedPropertyName
  *
- * @package Tarikweiss\Tjson\Attributes
+ * @package Tjson\Attributes
  * @Annotation
  * @\Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor()
  */
