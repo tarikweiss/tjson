@@ -1,4 +1,4 @@
-# tjson ![GitHub](https://img.shields.io/github/license/tarikweiss/tjson?style=for-the-badge)
+# tjson ![GitHub](https://img.shields.io/github/license/tarikweiss/tjson?style=for-the-badge) ![Packagist Version](https://img.shields.io/packagist/v/tarikweiss/tjson?style=for-the-badge)
 Map json strings into objects and vice versa.
 
 ## Usage
