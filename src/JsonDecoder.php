@@ -47,7 +47,7 @@ class JsonDecoder
      * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
      * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
-    public function decodeByObject(string $json, object $object)
+    public function decodeByObject(string $json, object $object): object
     {
         /**
          * @var \Tjson\Attributes\MappedPropertyName $mappedPropertyNameInstance
@@ -175,6 +175,7 @@ class JsonDecoder
      * @param \ReflectionProperty $reflectedProperty
      *
      * @return \Tjson\Decoding\AbstractedType[]
+     * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
      */
     private function getTypes(\ReflectionProperty $reflectedProperty): array
     {
