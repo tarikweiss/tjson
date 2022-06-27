@@ -14,8 +14,9 @@ class JsonEncoder
      *
      * @return string
      * @throws \Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
-    public function encode($object)
+    public function encode($object): string
     {
         $isArray  = is_array($object);
         $isObject = is_object($object);
@@ -38,15 +39,17 @@ class JsonEncoder
 
     /**
      * @param array $array
+     * @param int   $depth
      *
      * @return array
      * @throws \Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
-    private function prepareArray(array $array): array
+    private function prepareArray(array $array, int $depth = 1): array
     {
         $arrayToEncode = [];
         foreach ($array as $object) {
-            $arrayToEncode[] = $this->prepareObject($object);
+            $arrayToEncode[] = $this->prepareObject($object, $depth++);
         }
 
         return $arrayToEncode;
@@ -91,6 +94,9 @@ class JsonEncoder
             $reflectedPropertyValue = $reflectedProperty->getValue($object);
             if (is_object($reflectedPropertyValue) === true) {
                 $reflectedPropertyValue = $this->prepareObject($reflectedPropertyValue, $depth++);
+            }
+            if (is_array($reflectedPropertyValue) === true) {
+                $reflectedPropertyValue = $this->prepareArray($reflectedPropertyValue, $depth++);
             }
             $mappedProperties[$jsonPropertyName] = $reflectedPropertyValue;
         }
