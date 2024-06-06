@@ -14,35 +14,21 @@ namespace Tjson\Attributes;
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class MappedPropertyClass
 {
-    /**
-     * @var string 
-     */
     private string $class;
 
 
-    /**
-     * MappedPropertyClass constructor.
-     *
-     * @param string $class
-     */
     public function __construct(string $class)
     {
         $this->class = $class;
     }
 
 
-    /**
-     * @return string
-     */
     public function getClass(): string
     {
         return $this->class;
     }
 
 
-    /**
-     * @param string $class
-     */
     public function setClass(string $class): void
     {
         $this->class = $class;

@@ -6,9 +6,6 @@
 class RequiredDetectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @param string $json
-     * @param bool   $expectException
-     *
      * @return void
      * @throws \ReflectionException
      * @throws \Tjson\Exception\AmbiguousNameDefinitionException
@@ -62,37 +59,22 @@ class RequiredDetectionTest extends \PHPUnit\Framework\TestCase
 
 class TestObject
 {
-    /**
-     * @var string
-     */
     private $notRequired;
 
     /**
-     * @var string
      * @\Tjson\Attributes\Required(required = true)
      */
-    private $explicitRequired;
+    private        $explicitRequired;
 
-    /**
-     * @var string
-     */
     private string $implicitRequired;
 
 
-    /**
-     * @return string
-     */
     public function getNotRequired(): string
     {
         return $this->notRequired;
     }
 
 
-    /**
-     * @param string $notRequired
-     *
-     * @return TestObject
-     */
     public function setNotRequired(string $notRequired): TestObject
     {
         $this->notRequired = $notRequired;
@@ -101,20 +83,12 @@ class TestObject
     }
 
 
-    /**
-     * @return string
-     */
     public function getExplicitRequired(): string
     {
         return $this->explicitRequired;
     }
 
 
-    /**
-     * @param string $explicitRequired
-     *
-     * @return TestObject
-     */
     public function setExplicitRequired(string $explicitRequired): TestObject
     {
         $this->explicitRequired = $explicitRequired;
@@ -123,20 +97,12 @@ class TestObject
     }
 
 
-    /**
-     * @return string
-     */
     public function getImplicitRequired(): string
     {
         return $this->implicitRequired;
     }
 
 
-    /**
-     * @param string $implicitRequired
-     *
-     * @return TestObject
-     */
     public function setImplicitRequired(string $implicitRequired): TestObject
     {
         $this->implicitRequired = $implicitRequired;

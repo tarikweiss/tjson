@@ -10,9 +10,7 @@ namespace Tjson\Util;
 class ReflectionUtil
 {
     /**
-     * @param object $object
-     *
-     * @return \ReflectionProperty[]
+     * @return array<\ReflectionProperty>
      */
     public static function getReflectedProperties(object $object): array
     {
@@ -24,14 +22,9 @@ class ReflectionUtil
     }
 
 
-    /**
-     * @param \ReflectionProperty $reflectedProperty
-     *
-     * @return bool
-     */
     public static function isNullable(\ReflectionProperty $reflectedProperty): bool
     {
-        if (true === $reflectedProperty->hasType()) {
+        if ($reflectedProperty->hasType() === true) {
             return $reflectedProperty
                 ->getType()
                 ->allowsNull()
