@@ -9,6 +9,15 @@ namespace Tjson;
  */
 class JsonEncoder
 {
+    private int $maxDepth;
+
+
+    public function __construct(int $maxDepth = 512)
+    {
+        $this->maxDepth = $maxDepth;
+    }
+
+
     /**
      * @param mixed $object
      *
@@ -17,6 +26,16 @@ class JsonEncoder
      * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
     public function encode($object): string
+    {
+        return $this->prepareAny($object);
+    }
+
+
+    /**
+     * @throws \Tjson\Exception\AmbiguousNameDefinitionException
+     * @throws \Tjson\Exception\RequiredPropertyNotFoundException
+     */
+    private function prepareAny($object, int $depth = 1): string
     {
         $isArray  = is_array($object);
         $isObject = is_object($object);
@@ -27,10 +46,10 @@ class JsonEncoder
 
         $preparedData = null;
         if ($isObject === true) {
-            $preparedData = $this->prepareObject($object);
+            $preparedData = $this->prepareObject($object, $depth);
         }
         if ($isArray === true) {
-            $preparedData = $this->prepareArray($object);
+            $preparedData = $this->prepareArray($object, $depth);
         }
 
         return json_encode($preparedData);
@@ -38,18 +57,18 @@ class JsonEncoder
 
 
     /**
-     * @param array $array
-     * @param int   $depth
-     *
-     * @return array
      * @throws \Tjson\Exception\AmbiguousNameDefinitionException
      * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
     private function prepareArray(array $array, int $depth = 1): array
     {
+        if ($depth > $this->maxDepth) {
+            return [];
+        }
+
         $arrayToEncode = [];
         foreach ($array as $object) {
-            $arrayToEncode[] = $this->prepareObject($object, $depth++);
+            $arrayToEncode[] = $this->prepareAny($object, $depth++);
         }
 
         return $arrayToEncode;
@@ -57,16 +76,12 @@ class JsonEncoder
 
 
     /**
-     * @param object $object
-     * @param int    $depth
-     *
-     * @return array|null
      * @throws \Tjson\Exception\AmbiguousNameDefinitionException
      * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
     private function prepareObject(object $object, int $depth = 1): ?array
     {
-        if ($depth > 512) {
+        if ($depth > $this->maxDepth) {
             return null;
         }
         $mappedProperties    = [];

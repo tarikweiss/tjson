@@ -11,10 +11,10 @@ namespace Tjson;
 class JsonDecoder
 {
     /**
-     * @param string $json
-     * @param string $className
+     * @template T of object
+     * @param class-string<T> $className
      *
-     * @return mixed
+     * @return object<T>
      * @throws \ReflectionException
      * @throws \Tjson\Exception\AmbiguousNameDefinitionException
      * @throws \Tjson\Exception\AmbiguousTypeDefinitionException
@@ -22,7 +22,7 @@ class JsonDecoder
      * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
      * @throws \Tjson\Exception\RequiredPropertyNotFoundException
      */
-    public function decodeByClassName(string $json, string $className)
+    public function decodeByClassName(string $json, string $className): object
     {
         if (class_exists($className) === false) {
             throw new \Tjson\Exception\ClassNotFoundException('Class ' . $className . ' not found.');
@@ -49,9 +49,6 @@ class JsonDecoder
      */
     public function decodeByObject(string $json, object $object): object
     {
-        /**
-         * @var \Tjson\Attributes\MappedPropertyName $mappedPropertyNameInstance
-         */
         $decodedJson = json_decode($json, false);
 
         $reflectionObject    = new \ReflectionObject($object);
@@ -159,7 +156,6 @@ class JsonDecoder
 
     /**
      * @param mixed $jsonValueType
-     * @param bool  $nullable
      *
      * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
      */
@@ -172,9 +168,7 @@ class JsonDecoder
 
 
     /**
-     * @param \ReflectionProperty $reflectedProperty
-     *
-     * @return \Tjson\Decoding\AbstractedType[]
+     * @return array<\Tjson\Decoding\AbstractedType>
      * @throws \Tjson\Exception\NoMatchingTypeDefinitionException
      */
     private function getTypes(\ReflectionProperty $reflectedProperty): array
@@ -184,7 +178,7 @@ class JsonDecoder
          */
         $types            = [];
         $intersectionType = false;
-        if (true === $reflectedProperty->hasType()) {
+        if ($reflectedProperty->hasType() === true) {
             $type = $reflectedProperty->getType();
 
             if ($type instanceof \ReflectionNamedType === true) {
@@ -222,7 +216,7 @@ class JsonDecoder
                     $foundMatching = false;
                     foreach ($types as $type) {
                         $typeName = $type->getName();
-                        if ($mappedType instanceof $typeName) {
+                        if ($mappedType instanceof $typeName === true) {
                             $foundMatching = true;
                         }
                     }
@@ -251,11 +245,6 @@ class JsonDecoder
     }
 
 
-    /**
-     * @param \ReflectionProperty $reflectedProperty
-     *
-     * @return string|null
-     */
     private function getMappedType(\ReflectionProperty $reflectedProperty): ?string
     {
         $mappedType = null;

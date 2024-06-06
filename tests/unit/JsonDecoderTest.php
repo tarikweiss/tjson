@@ -101,11 +101,6 @@ class Foo
     }
 
 
-    /**
-     * @param int $int
-     *
-     * @return Foo
-     */
     public function setInt(int $int): Foo
     {
         $this->int = $int;
@@ -114,20 +109,12 @@ class Foo
     }
 
 
-    /**
-     * @return bool
-     */
     public function isBool(): bool
     {
         return $this->bool;
     }
 
 
-    /**
-     * @param bool $bool
-     *
-     * @return Foo
-     */
     public function setBool(bool $bool): Foo
     {
         $this->bool = $bool;
@@ -136,20 +123,12 @@ class Foo
     }
 
 
-    /**
-     * @return string
-     */
     public function getString(): string
     {
         return $this->string;
     }
 
 
-    /**
-     * @param string $string
-     *
-     * @return Foo
-     */
     public function setString(string $string): Foo
     {
         $this->string = $string;
@@ -158,20 +137,12 @@ class Foo
     }
 
 
-    /**
-     * @return float
-     */
     public function getFloat(): float
     {
         return $this->float;
     }
 
 
-    /**
-     * @param float $float
-     *
-     * @return Foo
-     */
     public function setFloat(float $float): Foo
     {
         $this->float = $float;
@@ -180,20 +151,12 @@ class Foo
     }
 
 
-    /**
-     * @return array
-     */
     public function getArray(): array
     {
         return $this->array;
     }
 
 
-    /**
-     * @param array $array
-     *
-     * @return Foo
-     */
     public function setArray(array $array): Foo
     {
         $this->array = $array;
@@ -202,20 +165,12 @@ class Foo
     }
 
 
-    /**
-     * @return object
-     */
     public function getObject(): object
     {
         return $this->object;
     }
 
 
-    /**
-     * @param object $object
-     *
-     * @return Foo
-     */
     public function setObject(object $object): Foo
     {
         $this->object = $object;
